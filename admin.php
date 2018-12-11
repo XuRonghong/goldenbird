@@ -139,5 +139,4 @@
         <td align="center" background="img/he3_7.gif">&nbsp;</td>
         <td background="img/he3_8.gif">&nbsp;</td>
     </tr>
-</table>
 <?php require_once ('_footer.php'); ?>

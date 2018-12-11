@@ -2,8 +2,11 @@
 <?php include_once('Model/goldenbirdConn1.php'); ?>
 <?php
     $vTitle = "Goldenbird活動首頁";
+    $show_num = 20;     //show 15 筆資料
 
     $currentPage = $_SERVER["PHP_SELF"];
+    //搜尋字串
+    $search = (isset($_POST['search']))? htmlspecialchars($_POST['search']) : null;
 
 
     $maxRows_activityClick = 10;
@@ -13,7 +16,7 @@
     }
     $startRow_activityClick = $pageNum_activityClick * $maxRows_activityClick;
     // SQL query
-    $row_activityClick = $DB->getActivityClick($startRow_activityClick,$maxRows_activityClick);
+    $row_activityClick = $DB->getActivityWithClick($search, $startRow_activityClick,$maxRows_activityClick);
 
 
     if (isset($_GET['totalRows_activityClick'])) {
@@ -41,9 +44,13 @@
     }
     $queryString_activityClick = sprintf("&totalRows_activityClick=%d%s", $totalRows_activityClick, $queryString_activityClick);
 
-
-    $row_activityClick = $DB->getActivityClick();
+    //最多點擊活動消息
+    $row_activityClick = $DB->getActivityWithClick($search);
     $totalRows_activityClick = $DB->getTotalRows();
+
+    //最新活動消息
+    $row_activityNew = $DB->getActivityWithNew(false, 0, 5);
+    $totalRows_activityNew = $DB->getTotalRows();
 
 ?>
 
@@ -80,8 +87,11 @@
         <tr>
             <td></td>
             <td>
-                <div >搜尋活動:<input type="text" id='txt_srh' name="search" />
-                    <input type="button" id='btn_srh' value="搜尋" />
+                <div >
+                    <form action="<?php echo $currentPage; ?>" method="post">
+                        搜尋活動:<input type="text" id='txt_srh' name="search" />
+                        <input type="button" id='btn_srh' value="搜尋" onclick="this.form.submit()" />
+                    </form>
                 </div>
             </td>
             <td></td>
@@ -108,22 +118,22 @@
                                     <td width="332" align="center" valign="middle">消息主題</td>
                                     <td width="80" align="center" valign="middle"><p>點閱率</p>          </td>
                                 </tr>
-                                <?php $i=1;?>
-                                <?php do {    if($i>15)break; ?>
+                                <?php $i=0; ?>
+                                <?php while ($row = $row_activityClick[$i]) {   if($i>$show_num)break;  ?>
                                     <tr>
                                         <td align="center"><?php echo $i++; ?></td>
-                                        <td align="center"><?php echo $row_activityClick['aPoTime']; ?></td>
+                                        <td align="center"><?php echo $row['aPoTime']; ?></td>
                                         <td align="center">
                                             <form id="form1" name="form1" method="post" action="">
-                                                <?php echo $row_activityClick['gName']; ?>
+                                                <?php echo $row['gName']; ?>
                                             </form>
                                         </td>
                                         <td align="left">
-                                            <a href="seenews.php?gId=<?php echo $row_activityClick['gId']; ?>&amp;aId=<?php echo $row_activityClick['aId']; ?>"><?php echo $row_activityClick['aTitle']; ?></a>
+                                            <a href="seenews.php?gId=<?php echo $row['gId']; ?>&amp;aId=<?php echo $row['aId']; ?>"><?php echo $row['aTitle']; ?></a>
                                         </td>
-                                        <td align="center"><?php echo $row_activityClick['aClick']; ?></td>
+                                        <td align="center"><?php echo $row['aClick']; ?></td>
                                     </tr>
-                                <?php } while ($row_activityClick = $row_activityClick[$i]); ?>
+                                <?php } ?>
                             </table>
                             <table width="650" border="0" align="center" cellpadding="0" cellspacing="2">
                                 <tr>
@@ -150,7 +160,11 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;最新活動消息
                 </div>
                 <div id="demo" >
-                    <br />
+                    <?php foreach ($row_activityNew as $row){ ?>
+                        <a href="seenews.php?gId=<?php echo $row['gId']; ?>&amp;aId=<?php echo $row['aId']; ?>"><?php echo $row['aTitle']; ?></a>
+                        <div style="text-align: right"><?php echo $row['aPoTime']; ?></div>
+                        <br>
+                    <?php } ?>
                 </div>
                 <br />
                 Facebook<br/>
@@ -168,8 +182,4 @@
             </td>
             <td height="30">&nbsp;</td>
         </tr>
-        <tr>
-            <td colspan="4" align="center">Copyright © 2013 Goldenbird All rights reserved</td>
-        </tr>
-    </table>
 <?php require_once ('_footer.php'); ?>

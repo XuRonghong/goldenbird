@@ -12,4 +12,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title><?php echo $vTitle; ?></title>
 
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
     <link href="css/mainNav.css" rel="stylesheet" type="text/css" />

@@ -21,6 +21,10 @@ $totalRows_class_all = mysql_num_rows($class_all);*/
 		$matrix[ $row_Recordset1['class.cId'] ]['gName'][]= $row_Recordset1['group.gName'];
 }while($row_Recordset1 = mysql_fetch_assoc($Recordset1));*/
 
+    //最新活動消息
+    $row_activityNew = $DB->getActivityWithNew(false, 0, 5);
+    $totalRows_activityNew = $DB->getTotalRows();
+
 ?>
 
 <?php require_once ('_header.php'); ?>
@@ -124,7 +128,7 @@ $totalRows_class_all = mysql_num_rows($class_all);*/
                                 <?php }?>
                             </ul>
                         </li>
-                    <?php }?>
+                    <?php } ?>
                     </ul>
                 </div>
             </td>
@@ -133,14 +137,16 @@ $totalRows_class_all = mysql_num_rows($class_all);*/
                     <br /><br /><br /><br />
                     &nbsp;&nbsp;&nbsp;&nbsp;最新活動消息
                 </div>
-                <div id="demo" ><br /></div>
+                <div id="demo" ><br />
+                    <?php foreach ($row_activityNew as $row){ ?>
+                        <a href="seenews.php?gId=<?php echo $row['gId']; ?>&amp;aId=<?php echo $row['aId']; ?>"><?php echo $row['aTitle']; ?></a>
+                        <div style="text-align: right"><?php echo $row['aPoTime']; ?></div>
+                        <br>
+                    <?php } ?>
+                </div>
             </td>
             <td height="30">&nbsp;</td>
         </tr>
-        <tr>
-            <td colspan="4" align="center">Copyright © 2013 Goldenbird All rights reserved</td>
-        </tr>
-    </table>
 
 
     <!--參考於http://www.minwt.com/js/1202.html梅問題網站  做出收合選單-->

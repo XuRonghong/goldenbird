@@ -113,14 +113,32 @@ class WADB
      * @param int $maxRows_activityClick
      * return mysqli_retch_assoc
      */
-    function getActivityClick($startRow_activityClick=0,$maxRows_activityClick=0)
+    function getActivityWithClick($search=false, $startRow_activityClick=0,$maxRows_activityClick=PHP_INT_MAX)
     {
+        $query = $search? " `activity`.aTitle LIKE '%".$search."%' " : ' 1 ';
         $sql = "SELECT * 
                 FROM `activity` JOIN `group`  
-                  ON activity.gId = group.gId 
-                ORDER BY activity.aClick DESC ";
-        if ($maxRows_activityClick)
-            $sql = sprintf(" %s LIMIT %d, %d ", $sql, $startRow_activityClick, $maxRows_activityClick);
+                  ON `activity`.gId = `group`.gId 
+                WHERE " . $query . " 
+                ORDER BY `activity`.aClick DESC 
+                LIMIT ".$startRow_activityClick." , ".$maxRows_activityClick;
+        return $this->SelectRecords($sql);
+    }
+
+    /* from index.php
+     * @param int $startRow_activityClick
+     * @param int $maxRows_activityClick
+     * return mysqli_retch_assoc
+     */
+    function getActivityWithNew($search=false, $startRow_activityClick=0,$maxRows_activityClick=PHP_INT_MAX)
+    {
+        $query = $search? " `activity`.aTitle LIKE '%".$search."%' " : ' 1 ';
+        $sql = "SELECT * 
+                FROM `activity` JOIN `group`  
+                  ON `activity`.gId = `group`.gId 
+                WHERE " . $query . " 
+                ORDER BY `activity`.aPoTime DESC 
+                LIMIT ".$startRow_activityClick." , ".$maxRows_activityClick;
         return $this->SelectRecords($sql);
     }
 
@@ -133,11 +151,9 @@ class WADB
     {
         $sql = "SELECT * 
                 FROM `activity` LEFT JOIN `message`  
-                  ON activity.aId = message.aId 
-                WHERE activity.aId = %d 
-                ORDER BY activity.gId ASC ";
-        if ($colname_activityMain)
-            $sql = sprintf($sql, $this->GetSQLValueString($colname_activityMain, "int"));
+                  ON `activity`.aId = `message`.aId 
+                WHERE `activity`.aId = ".$this->GetSQLValueString($colname_activityMain, "int")." 
+                ORDER BY `activity`.gId ASC ";
         return $this->SelectRecords($sql);
     }
 
@@ -149,24 +165,24 @@ class WADB
     function getGroupById($colname_activityGid=0)
     {
         $sql = "SELECT * 
-                FROM `group` 
-                WHERE gId = %d 
-                ORDER BY gId ASC ";
-        if ($colname_activityGid)
-            $sql = sprintf($sql, $this->GetSQLValueString($colname_activityGid, "int"));
+                FROM `group` LEFT JOIN `class` 
+                  ON `class`.cId = `group`.cId 
+                WHERE `group`.gId=".$this->GetSQLValueString($colname_activityGid, "int")." 
+                ORDER BY `group`.gId ASC ";
         return $this->SelectRecords($sql);
     }
 
-    /* from admin.php
-     * @param int
+    /* from admin.php, adminindex.php
+     * @param int $gmid
      * @param int
      * return mysqli_retch_assoc
      */
-    function getGroupManage()
+    function getGroupManage($gmid=0)
     {
+        $query = $gmid? 'gmId='.$this->GetSQLValueString($gmid, "int").' ' : ' 1 ';
         $sql = "SELECT * 
                 FROM `group_manage` 
-                WHERE 1 
+                WHERE ".$query."
                 ORDER BY gmId ASC ";
         return $this->SelectRecords($sql);
     }
@@ -180,14 +196,9 @@ class WADB
     {
         $sql = "SELECT gmId, gUs, gPw 
                 FROM group_manage 
-                WHERE gUs LIKE %s 
-                  AND gPw LIKE %s 
+                WHERE gUs LIKE ".$this->GetSQLValueString($loginUsername, "text")." 
+                  AND gPw LIKE ".$this->GetSQLValueString($password, "text")." 
                 ORDER BY gmId ASC ";
-        if ($loginUsername!='')
-            $sql = sprintf($sql,
-                $this->GetSQLValueString($loginUsername, "text"),
-                $this->GetSQLValueString($password, "text")
-            );
         return $this->SelectRecords($sql);
     }
 
@@ -206,21 +217,59 @@ class WADB
     }
 
     /* from classify.php
-     * @param int
+     * @param int $cid
      * @param int
      * return mysqli_retch_assoc
      */
     function getGroupByClass($cid=0)
     {
         $sql = "SELECT * 
-                FROM `class` JOIN `group` 
-                ON class.cId = group.cId 
-                WHERE class.cId = %d 
-                ORDER BY group.gId DESC ";
-        if ($cid)
-            $sql = sprintf($sql,
-                $this->GetSQLValueString($cid, "int")
-            );
+                FROM `group` 
+                WHERE `group`.cId = ". $this->GetSQLValueString($cid,"int") ."
+                ORDER BY `group`.gId DESC ";
+        return $this->SelectRecords($sql);
+    }
+
+    /* from act_group.php
+     * @param int
+     * @param int
+     * return mysqli_retch_assoc
+     */
+    function getActivityByGroup($colname_groupActivity=0)
+    {
+        $sql = "SELECT * 
+                FROM `activity` 
+                WHERE `activity`.gId = ". $this->GetSQLValueString($colname_groupActivity,"int") ."
+                ORDER BY `activity`.aId DESC ";
+        return $this->SelectRecords($sql);
+    }
+
+    /* from adminindex.php
+     * @param int $gmid
+     * @param int
+     * return mysqli_retch_assoc
+     */
+    function getGroupWithClassById($gmid=0)
+    {
+        $sql = "SELECT G.gId, gName, gImages, gIntroduction, gTime, G.cId,cName 
+                FROM  `class` C  JOIN  `group` G 
+                  ON C.cId = G.cId 
+                WHERE G.gmId = ". $this->GetSQLValueString($gmid,"int") ." 
+                ORDER BY G.gTime DESC ";
+        return $this->SelectRecords($sql);
+    }
+
+    /* from adminindex.php
+     * @param int
+     * @param int
+     * return mysqli_retch_assoc
+     */
+    function getGroupManageByUs($colname_groupManage=0)
+    {
+        $sql = "SELECT * 
+                FROM  `group_manage` 
+                WHERE gUs LIKE ". $this->GetSQLValueString($colname_groupManage,"text") ." 
+                ORDER BY gmId DESC ";
         return $this->SelectRecords($sql);
     }
 
@@ -230,12 +279,10 @@ class WADB
     function setMessageWithId($aId=0,$mContent='',$uPhone='')
     {
         $sql = "INSERT INTO message (mContent, uPhone, aId) 
-                VALUES (%s, %s, %s) ";
-        $sql = sprintf( $sql,
-                    $this->GetSQLValueString($mContent, "text"),
-                    $this->GetSQLValueString($uPhone, "text"),
-                    $this->GetSQLValueString($aId, "int")
-                );
+                VALUES (".
+            $this->GetSQLValueString($mContent, "text").",".
+            $this->GetSQLValueString($uPhone, "text").",".
+            $this->GetSQLValueString($aId, "int").") ";
         return $this->InsertRecords($sql);
     }
 
@@ -244,8 +291,21 @@ class WADB
      */
     function putActivityWithClick($colname_activityMain=0)
     {
-        $sql = "UPDATE activity SET aClick= aClick + 1 WHERE aId= %d ";
-        $sql = sprintf( $sql, $this->GetSQLValueString($colname_activityMain, "int") );
+        $sql = "UPDATE activity SET aClick= aClick + 1 
+                WHERE aId=".$this->GetSQLValueString($colname_activityMain, "int");
+        return $this->UpdateRecords($sql);
+    }
+
+    /* from adminindex.php
+     * put SQL query
+     */
+    function putGroupManage($gname='', $gPhone='', $gPw='', $gmId=0)
+    {
+        $sql = "UPDATE group_manage 
+                SET gName=".$this->GetSQLValueString($gname, "text").", 
+                    gPhone=".$this->GetSQLValueString($gPhone, "text").", 
+                    gPw=".$this->GetSQLValueString($gPw, "text")."  
+                WHERE gmId=".$this->GetSQLValueString($gmId, "int");
         return $this->UpdateRecords($sql);
     }
 }
