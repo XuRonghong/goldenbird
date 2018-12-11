@@ -1,0 +1,30 @@
+/* CSS Document */
+div#mainNav {
+	background-color:#FFB366;
+}
+div#mainNav  ul{
+	position:absolute;
+	border-left:#666 5px solid;
+	overflow: auto;
+	padding:0;
+}
+div#mainNav  li{
+	list-style-type:none;
+	float:left;
+}
+div#mainNav li a{
+    display:block;
+	width:90px;
+	height:30px;
+	background-color:#033;
+	color:#CCC;
+	font-weight:bold;
+	text-align:center;
+	line-height:50px;
+	text-decoration:none;
+	border-right:#666 5px solid;
+}
+div#mainNav  li a:hover{
+	background-color:#F30;
+	color:#FF6;
+}

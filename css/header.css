@@ -1,0 +1,55 @@
+/* CSS Document */
+
+body{
+	margin:0px;	
+	padding: 0px;
+}
+body,td,th {
+	font-size: 11pt;
+	padding: 1px;
+}
+a {	
+	font-size: medium;
+	/*color: #000066;*/
+}
+a:link {
+	text-decoration: none;
+}
+a:visited {
+	text-decoration: none;
+	/*color: #6699FF;*/
+}
+a:hover {
+	text-decoration: underline;
+	/*color: #33CCFF;*/
+}
+a:active {
+	text-decoration: none;
+	/*color: #2C4886;*/
+	font-size: medium;
+}
+.style1 {color: #666666}
+.style2 {
+	font-size: 12pt;
+	color: #990000;
+	font-weight: bold;
+}
+#block1 tr td {
+	font-family: "微軟正黑體";
+	color: #000;
+	font-size: medium;
+}
+
+div#demo {
+	 border-style:solid;
+	 border-color:#A4BAE0;
+	 border-width: 1px;
+	 background-color:#ffffff;
+	 width: 280px;
+	 
+	 margin: 20px;
+}
+
+div#contain{
+	vertical-align:top;
+}

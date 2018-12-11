@@ -1,0 +1,49 @@
+
+body,td,th {
+	font-size: medium;
+}
+
+
+
+a {
+	font-size: medium;
+	color: #2552c4;
+}
+a:link {
+	text-decoration: none;
+}
+a:visited {
+	text-decoration: none;
+	color: #A4BAE0;
+}
+a:hover {
+	text-decoration: underline;
+	color: #33CCFF;
+}
+a:active {
+	text-decoration: none;
+	color: #2C4886;
+}
+
+
+#menu1 td{
+	color: #FFF;	
+	font-family:"微軟正黑體";
+}
+#menu1 a:link {
+	text-decoration: none;
+	color: #FFC;
+}
+#menu1 a:visited {
+	text-decoration: none;
+	color: #FFCC66;
+}
+#menu1 a:hover {
+	text-decoration: none;
+	color: #fff;
+}
+#menu1 a:active {
+	font-size: medium;
+	color: #FC0;
+	
+}

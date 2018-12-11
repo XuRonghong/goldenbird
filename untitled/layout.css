@@ -1,0 +1,109 @@
+/* CSS Document */
+
+*{
+	padding:0;
+	margin:0;	
+	background-color:#fff;
+}
+body{
+	background-color:#eee;	
+}
+#wrapper{
+	width:1024px;
+	margin:0 auto;	//邊界，上下為0，左右為自動	
+	background-color:#fff;	
+	border-left:#666 1px solid;
+	border-right:#666 1px solid;
+	
+	
+	-moz-box-shadow: 2px 2px 10px #909090;/* for firefox */
+-webkit-box-shadow: 2px 2px 10px #909090;/* for safari or chrome */
+}
+
+/*標題*/
+#header{
+	height:150px;
+	}
+#header p {}
+#header p a{
+	display:block;
+	width:80px;
+	height:40px;
+	line-height:40px;
+	text-align:center;
+	font-weight:bold;
+	}
+	
+/*選單*/
+#mainNav{
+	background-color:#660000;	
+	position:relative;
+	clear:both;	 //解除被上方的浮動區塊的影響，以回歸標籤的原始位置
+}
+#mainNav ul{	
+	margin-left:137px;	/*  (1024-150*5)/2  */
+	
+}
+#mainNav li{
+	float:left;
+	list-style-type:none;	
+}
+#mainNav li a{
+	display:block;
+	width:150px;
+	height:25px;
+	text-align:center;
+	color:#333;
+	padding-top:15px;		
+}
+
+#content{		
+	float:left;
+	width:65%;
+	padding:10px;
+}
+#content #conNav{
+	font-weight:bold;
+	font-size:12px;
+	margin:20px auto 20px ;	
+}
+#content #conNav a{
+	margin-left:50px ;	
+	margin-right:20px ;	
+}
+#content p{
+	
+}
+
+#sidebar2{	
+	float:right;	
+	width:30%;
+	padding:15px;
+}
+#sidebar2 #x1{	
+	margin-top:30px;
+	background-color:#ddd;
+	background-image:url(sidebar1_viewmore.gif);
+	height:200px;
+}
+#sidebar2 #x2{
+	margin-top:30px;
+	background-color:#000;
+	background-image:url(content_info.gif);
+	height:300px;
+}
+#sidebar2 #x3{	
+	margin-top:30px;
+	background-color:#000;
+	background-image:url(sidebar1_sale.gif);
+	height:200px;
+}
+
+#footer{	
+	clear:both;
+	height:50px;
+	}
+#footer h4 {
+	text-align:center;
+	line-height:25px;
+}
