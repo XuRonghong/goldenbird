@@ -1,6 +1,8 @@
-<?php     
-function _UPLOADPIC($upfile, $maxsize, $updir, $newname = 'date') {     
-         
+<?php
+
+
+function _UPLOADPIC($upfile, $maxsize, $updir, $newname = 'date')
+{
     if ($newname == 'date')     
         $newname = date ( "Ymdhis" ); //使用日期做文件名       
     $name = $upfile ["name"];     
@@ -19,7 +21,8 @@ function _UPLOADPIC($upfile, $maxsize, $updir, $newname = 'date') {
         case 'image/png' :     
             $extend = ".png";     
             break;     
-    }     
+    }
+
     if (empty ( $extend )) {     
         echo  ( "警告！只能上传图片类型：GIF JPG PNG" );     
         exit ();     
@@ -31,9 +34,11 @@ function _UPLOADPIC($upfile, $maxsize, $updir, $newname = 'date') {
     }     
     if (move_uploaded_file ( $tmp_name, $updir /*. $newname . $extend */)) {     
         return $updir /*. $newname . $extend*/;     
-    }     
+    }
+    return $updir;
 }     
-    
+
+
 function show_pic_scal($width, $height, $picpath) {     
     $imginfo = GetImageSize ( $picpath );     
     $imgw = $imginfo [0];     
@@ -64,18 +69,19 @@ function show_pic_scal($width, $height, $picpath) {
          
     return $newsize;     
 }     
-    
-    
+
     
 function getImageInfo($src)     
 {     
     return getimagesize($src);     
-}     
+}
+
+
 /**   
 * 创建图片，返回资源类型   
 * @param string $src 图片路径   
 * @return resource $im 返回资源类型    
-* **/    
+* **/
 function create($src)     
 {     
     $info=getImageInfo($src);     
@@ -92,15 +98,16 @@ function create($src)
             break;     
     }     
     return $im;     
-}     
+}
+
+
 /**   
 * 缩略图主函数   
 * @param string $src 图片路径   
 * @param int $w 缩略图宽度   
 * @param int $h 缩略图高度   
 * @return mixed 返回缩略图路径   
-* **/    
-    
+* **/
 function resize($src,$w,$h)     
 {     
     $temp=pathinfo($src);     
@@ -152,8 +159,11 @@ function resize($src,$w,$h)
         imagedestroy($im);     
         return addBg($savepath,$w,$h,"h");     
         //高度优先，在缩放之后宽度不足的情况下补上背景     
-    }     
-}     
+    }
+    return null;
+}
+
+
 /**   
 * 添加背景   
 * @param string $src 图片路径   
@@ -195,9 +205,7 @@ function addBg($src,$w,$h,$fisrt="w")
         imagedestroy($bg);     
         imagedestroy($img);     
         return $src;     
-    }     
-    
-}     
-    
-    
-?>   
+    }
+}
+
+?>

@@ -109,13 +109,16 @@ class WADB
 
 
     /* from index.php
+     * @param string $search
      * @param int $startRow_activityClick
      * @param int $maxRows_activityClick
      * return mysqli_retch_assoc
      */
-    function getActivityWithClick($search=false, $startRow_activityClick=0,$maxRows_activityClick=PHP_INT_MAX)
+    function getActivityWithClick($search=false, $startRow_activityClick=0, $maxRows_activityClick=PHP_INT_MAX)
     {
         $query = $search? " `activity`.aTitle LIKE '%".$search."%' " : ' 1 ';
+        $query .= $search? " OR `activity`.aContent LIKE '%".$search."%' " : '';
+        $query .= $search? " OR `group`.gName LIKE '%".$search."%' " : '';
         $sql = "SELECT * 
                 FROM `activity` JOIN `group`  
                   ON `activity`.gId = `group`.gId 
@@ -126,6 +129,7 @@ class WADB
     }
 
     /* from index.php
+     * @param string $search
      * @param int $startRow_activityClick
      * @param int $maxRows_activityClick
      * return mysqli_retch_assoc
@@ -143,7 +147,7 @@ class WADB
     }
 
     /* from seenews.php
-     * @param int $colname_activityMain
+     * @param int `activity`.aId
      * @param int
      * return mysqli_retch_assoc
      */
@@ -158,7 +162,7 @@ class WADB
     }
 
     /* from seenews.php
-     * @param int $colname_activityGid
+     * @param int `group`.gId
      * @param int
      * return mysqli_retch_assoc
      */
@@ -231,7 +235,7 @@ class WADB
     }
 
     /* from act_group.php
-     * @param int
+     * @param int `activity`.gId
      * @param int
      * return mysqli_retch_assoc
      */
@@ -246,21 +250,26 @@ class WADB
 
     /* from adminindex.php
      * @param int $gmid
-     * @param int
+     * @param int $gid
      * return mysqli_retch_assoc
      */
-    function getGroupWithClassById($gmid=0)
+    function getGroupWithClassById($gmid=0, $gid=0)
     {
+        $query = '';
+        if ($gmid)
+            $query .= ' AND G.gmId='.$this->GetSQLValueString($gmid,"int");
+        if ($gid)
+            $query .= ' AND G.gId='.$this->GetSQLValueString($gid,"int");
         $sql = "SELECT G.gId, gName, gImages, gIntroduction, gTime, G.cId,cName 
                 FROM  `class` C  JOIN  `group` G 
                   ON C.cId = G.cId 
-                WHERE G.gmId = ". $this->GetSQLValueString($gmid,"int") ." 
+                WHERE ' 1 '". $query ." 
                 ORDER BY G.gTime DESC ";
         return $this->SelectRecords($sql);
     }
 
     /* from adminindex.php
-     * @param int
+     * @param int gUs
      * @param int
      * return mysqli_retch_assoc
      */
@@ -273,16 +282,83 @@ class WADB
         return $this->SelectRecords($sql);
     }
 
+    /* from adminindex.php
+     * @param int $id
+     * @param string $mid
+     * return mysqli_retch_assoc
+     */
+    function getMessageById($id=0, $type='mid')
+    {
+        if ($type=='aid')
+            $query = ' AND aId='.$this->GetSQLValueString($id,"int");
+        if ($type=='mid')
+            $query = ' AND mId='.$this->GetSQLValueString($id,"int");
+        $sql = "SELECT * 
+                FROM  `message` 
+                WHERE 1 ".$query."  
+                ORDER BY mId ASC ";
+        return $this->SelectRecords($sql);
+    }
+
+
     /* from seenews.php
      * post SQL query
      */
     function setMessageWithId($aId=0,$mContent='',$uPhone='')
     {
-        $sql = "INSERT INTO message (mContent, uPhone, aId) 
+        $sql = "INSERT INTO `message` (mContent, uPhone, aId) 
                 VALUES (".
             $this->GetSQLValueString($mContent, "text").",".
             $this->GetSQLValueString($uPhone, "text").",".
             $this->GetSQLValueString($aId, "int").") ";
+        return $this->InsertRecords($sql);
+    }
+
+    /* from _add_manage.php
+     * post SQL query
+     */
+    function setGroup($arr=[], $insert='', $column='')
+    {
+        foreach ($arr as $key => $var){
+            $column .= $key.",";
+            $insert .= $this->GetSQLValueString($var, is_string($var)?"text":"int" ).",";
+        }
+        $column = substr($column, 0, strlen($column)-1 );   //把最後那個,拿掉
+        $insert = substr($insert, 0, strlen($insert)-1 );   //把最後那個,拿掉
+        $sql = "INSERT INTO `group` (".$column.") 
+                VALUES (".$insert.") ";
+        return $this->InsertRecords($sql);
+    }
+
+    /* from addActivity.php
+     * post SQL query
+     */
+    function setActivity($arr=[], $insert='', $column='')
+    {
+        foreach ($arr as $key => $var){
+            $column .= $key.",";
+            $insert .= $this->GetSQLValueString($var, is_string($var)?"text":"int" ).",";
+        }
+        $column = substr($column, 0, strlen($column)-1 );   //把最後那個,拿掉
+        $insert = substr($insert, 0, strlen($insert)-1 );   //把最後那個,拿掉
+        $sql = "INSERT INTO `activity` (".$column.") 
+                VALUES (".$insert.") ";
+        return $this->InsertRecords($sql);
+    }
+
+    /* from addmem.php
+     * post SQL query
+     */
+    function setGroupManage($arr=[], $insert='', $column='')
+    {
+        foreach ($arr as $key => $var){
+            $column .= $key.",";
+            $insert .= $this->GetSQLValueString($var, is_string($var)?"text":"int" ).",";
+        }
+        $column = substr($column, 0, strlen($column)-1 );   //把最後那個,拿掉
+        $insert = substr($insert, 0, strlen($insert)-1 );   //把最後那個,拿掉
+        $sql = "INSERT INTO `group_manage` (".$column.") 
+                VALUES (".$insert.") ";
         return $this->InsertRecords($sql);
     }
 
@@ -291,7 +367,7 @@ class WADB
      */
     function putActivityWithClick($colname_activityMain=0)
     {
-        $sql = "UPDATE activity SET aClick= aClick + 1 
+        $sql = "UPDATE `activity` SET aClick= aClick + 1 
                 WHERE aId=".$this->GetSQLValueString($colname_activityMain, "int");
         return $this->UpdateRecords($sql);
     }
@@ -301,13 +377,69 @@ class WADB
      */
     function putGroupManage($gname='', $gPhone='', $gPw='', $gmId=0)
     {
-        $sql = "UPDATE group_manage 
+        $sql = "UPDATE `group_manage` 
                 SET gName=".$this->GetSQLValueString($gname, "text").", 
                     gPhone=".$this->GetSQLValueString($gPhone, "text").", 
                     gPw=".$this->GetSQLValueString($gPw, "text")."  
                 WHERE gmId=".$this->GetSQLValueString($gmId, "int");
         return $this->UpdateRecords($sql);
     }
-}
 
+    /* from editnews.php
+     * put SQL query
+     */
+    function putGroup($arr=[], $gid=0, $update='')
+    {
+        foreach ($arr as $key => $var){
+            $update .= $key .'='.$this->GetSQLValueString($var, is_string($var)?"text":"int" ).",";
+        }
+        $update = substr($update, 0, strlen($update)-1 );   //把最後那個,拿掉
+        $sql = "UPDATE `group` 
+                SET ".$update." 
+                WHERE gId=".$this->GetSQLValueString($gid, "int");
+        return $this->UpdateRecords($sql);
+    }
+
+    /* from activitymain.php
+     * delete SQL query
+     */
+    function deleteMessageById($id=0, $type='mid')
+    {
+        if ($type=='aid')
+            $query = ' AND aId='.$this->GetSQLValueString($id,"int");
+        if ($type=='mid')
+            $query = ' AND mId='.$this->GetSQLValueString($id,"int");
+        $sql = "DELETE FROM `message` 
+                WHERE ' 1 '". $query ;
+        return $this->DeleteRecords($sql);
+    }
+
+    /* from activitymain.php
+     * delete SQL query
+     */
+    function deleteActivityById($id=0, $type='aid')
+    {
+        if ($type=='aid')
+            $query = ' AND aId='.$this->GetSQLValueString($id,"int");
+        if ($type=='gid')
+            $query = ' AND gId='.$this->GetSQLValueString($id,"int");
+        $sql = "DELETE FROM `activity` 
+                WHERE ' 1 '". $query ;
+        return $this->DeleteRecords($sql);
+    }
+
+    /* from activitymain.php
+     * delete SQL query
+     */
+    function deleteGroupById($id=0, $type='gid')
+    {
+        if ($type=='aid')
+            $query = ' AND aId='.$this->GetSQLValueString($id,"int");
+        if ($type=='gid')
+            $query = ' AND gId='.$this->GetSQLValueString($id,"int");
+        $sql = "DELETE FROM `activity` 
+                WHERE ' 1 '". $query ;
+        return $this->DeleteRecords($sql);
+    }
+}
 ?>

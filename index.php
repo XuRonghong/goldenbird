@@ -84,15 +84,43 @@
                 </table>
             </td>
         </tr>
-        <tr>
+        <tr >
             <td></td>
-            <td>
+            <td style="height: 15px;">
                 <div >
                     <form action="<?php echo $currentPage; ?>" method="post">
-                        搜尋活動:<input type="text" id='txt_srh' name="search" />
-                        <input type="button" id='btn_srh' value="搜尋" onclick="this.form.submit()" />
+                        搜尋活動:<input type="text" id='txt_srh' name="search"  />
+<!--                        <input type="button" id='btn_srh' value="搜尋" onclick="this.form.submit()" />-->
+                        <input type="button" id='btn_srh' value="搜尋" />
                     </form>
                 </div>
+                <div id="demo_search" >
+                </div>
+            </td>
+            <td width="320" align="left" valign="top" bgcolor="#ddd" rowspan="2">
+                <div id="demo_aid" ><br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;最新活動消息
+                </div>
+                <div id="demo" >
+                    <!--                    --><?php //foreach ($row_activityNew as $row){ ?>
+                    <!--                        <a href="seenews.php?gId=--><?php //echo $row['gId']; ?><!--&amp;aId=--><?php //echo $row['aId']; ?><!--">--><?php //echo $row['aTitle']; ?><!--</a>-->
+                    <!--                        <div style="text-align: right">--><?php //echo $row['aPoTime']; ?><!--</div>-->
+                    <!--                        <br>-->
+                    <!--                    --><?php //} ?>
+                </div>
+                <br />
+                Facebook<br/>
+                <div id="fb-root"></div>
+                <script>
+                    (function(d, s, id) {
+                        var js, fjs = d.getElementsByTagName(s)[0];
+                        if (d.getElementById(id)) return;
+                        js = d.createElement(s); js.id = id;
+                        js.src = "//connect.facebook.net/zh_TW/all.js#xfbml=1";
+                        fjs.parentNode.insertBefore(js, fjs);
+                    }(document, 'script', 'facebook-jssdk'));
+                </script>
+                <div class="fb-comments" data-href="https://www.facebook.com/Goldenbird123" data-width="350"></div>
             </td>
             <td></td>
         </tr>
@@ -155,31 +183,35 @@
                     </tr>
                 </table>
             </td>
-            <td width="320" align="left" valign="top" bgcolor="#ddd" >
-                <div id="demo_aid" ><br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;最新活動消息
-                </div>
-                <div id="demo" >
-                    <?php foreach ($row_activityNew as $row){ ?>
-                        <a href="seenews.php?gId=<?php echo $row['gId']; ?>&amp;aId=<?php echo $row['aId']; ?>"><?php echo $row['aTitle']; ?></a>
-                        <div style="text-align: right"><?php echo $row['aPoTime']; ?></div>
-                        <br>
-                    <?php } ?>
-                </div>
-                <br />
-                Facebook<br/>
-                <div id="fb-root"></div>
-                <script>
-                    (function(d, s, id) {
-                        var js, fjs = d.getElementsByTagName(s)[0];
-                        if (d.getElementById(id)) return;
-                        js = d.createElement(s); js.id = id;
-                        js.src = "//connect.facebook.net/zh_TW/all.js#xfbml=1";
-                        fjs.parentNode.insertBefore(js, fjs);
-                    }(document, 'script', 'facebook-jssdk'));
-                </script>
-                <div class="fb-comments" data-href="https://www.facebook.com/Goldenbird123" data-width="350"></div>
-            </td>
             <td height="30">&nbsp;</td>
         </tr>
+
+<!-------------------  js in-line  ---------------------->
+    <script type="text/javascript">
+        $().ready(function(){
+            $.ajax({
+                url: 'demo_ajax_load.php',
+                data: [],
+                type: "GET",
+                async: false,
+                success: function (data) {
+                    $('#demo').html(data);
+                }
+            });
+            //
+            $('#btn_srh').click(function (e) {
+                var data = {};
+                data.srh = $('#txt_srh').val();
+                $.ajax({
+                    url: 'demo_ajax_search.php',
+                    data: data,
+                    type: "GET",
+                    async: false,
+                    success: function (data) {
+                        $('#demo_search').html(data);
+                    }
+                });
+            })
+        });
+    </script>
 <?php require_once ('_footer.php'); ?>

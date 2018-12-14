@@ -133,16 +133,15 @@ $totalRows_class_all = mysql_num_rows($class_all);*/
                 </div>
             </td>
             <td width="320" height='640' align="left" valign="top" bgcolor="#ddd" >
-                <div id="demo_aid" >
-                    <br /><br /><br /><br />
+                <div id="demo_aid" ><br />
                     &nbsp;&nbsp;&nbsp;&nbsp;最新活動消息
                 </div>
                 <div id="demo" ><br />
-                    <?php foreach ($row_activityNew as $row){ ?>
-                        <a href="seenews.php?gId=<?php echo $row['gId']; ?>&amp;aId=<?php echo $row['aId']; ?>"><?php echo $row['aTitle']; ?></a>
-                        <div style="text-align: right"><?php echo $row['aPoTime']; ?></div>
-                        <br>
-                    <?php } ?>
+<!--                    --><?php //foreach ($row_activityNew as $row){ ?>
+<!--                        <a href="seenews.php?gId=--><?php //echo $row['gId']; ?><!--&amp;aId=--><?php //echo $row['aId']; ?><!--">--><?php //echo $row['aTitle']; ?><!--</a>-->
+<!--                        <div style="text-align: right">--><?php //echo $row['aPoTime']; ?><!--</div>-->
+<!--                        <br>-->
+<!--                    --><?php //} ?>
                 </div>
             </td>
             <td height="30">&nbsp;</td>
@@ -170,6 +169,34 @@ $totalRows_class_all = mysql_num_rows($class_all);*/
             $("a").focus( function(){
                 $(this).blur();
             });
+        });
+    </script>
+    <!-------------------  js in-line  ---------------------->
+    <script type="text/javascript">
+        $().ready(function(){
+            $.ajax({
+                url: 'demo_ajax_load.php',
+                data: [],
+                type: "GET",
+                async: false,
+                success: function (data) {
+                    $('#demo').html(data);
+                }
+            });
+            //
+            $('#btn_srh').click(function (e) {
+                var data = {};
+                data.srh = $('#txt_srh').val();
+                $.ajax({
+                    url: 'demo_ajax_search.php',
+                    data: data,
+                    type: "GET",
+                    async: false,
+                    success: function (data) {
+                        $('#demo_search').html(data);
+                    }
+                });
+            })
         });
     </script>
 <?php require_once ('_footer.php'); ?>

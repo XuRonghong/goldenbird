@@ -45,10 +45,13 @@
             $_SESSION['gmId'] = $row['gmId'];
             /*$sql="SELECT gmId FROM `group_manage` WHERE gUs=".$loginUsername;
             $result = mysql_query($sql, $goldenbirdConn1) or die(mysql_error())*/
+
             header("Location: " . $MM_redirectLoginSuccess."?gmId=".$row['gmId'] );
+            exit();
         }
         else {
             header("Location: ". $MM_redirectLoginFailed );
+            exit();
         }
     }
 

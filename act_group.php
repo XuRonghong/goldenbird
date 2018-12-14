@@ -135,7 +135,8 @@ $totalRows_class_all = mysql_num_rows($class_all);*/
                             if($row_Group_activity['gImages']=="無圖片"){
                                 echo "<img src='img/goldenbird.png' width='80' />";
                             } else {
-                                echo "<img src='upload/{$_GET['gmId']}_{$row_Group_activity['gImages']}' width='80' />";
+//                                echo "<img src='upload/{$_GET['gmId']}_{$row_Group_activity['gImages']}' width='80' />";
+                                echo "<img src='upload/{$row_Group_activity['gImages']}' width='80' />";
                             }
                             ?>
                         </td>
